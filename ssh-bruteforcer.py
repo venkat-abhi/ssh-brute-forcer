@@ -109,9 +109,9 @@ def ssh_brute_forcer_simple():
 
 def main():
 
-	#get_target_details()
+	get_target_details()
 	#test_get_details()
-	test_ssh_brute()
+	#test_ssh_brute()
 	ssh_brute_forcer_simple()
 
 if __name__ == "__main__":
