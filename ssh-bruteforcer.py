@@ -1,22 +1,18 @@
 import paramiko, sys, os, socket
-"""
-import warnings
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", module='.*paramiko.*')
-	#warnings.simplefilter("ignore", cryptography.utils.DeprecatedIn23)
-"""
+
 g_host = g_user_name = g_word_list = ""
 line = "\n------------------------------------------------------\n"
 SSH_PORT = 22
 
 # get the details of the SSH server from the user
 def get_target_details():
+	global g_host, g_user_name, g_word_list
 	try:
-		global g_host, g_user_name, g_word_list
 		g_host = input("[*] Enter target's address: ")
 		g_user_name = input("[*] Enter the SSH username to bruteforce: ")
 		g_word_list = input("[*] Enter the path of the password-list: ")
 
+		# check if the file exists before proceeding
 		if (os.path.exists(g_word_list) == False):
 			print("\n[*] Wordlist file does not exist at given path")
 			sys.exit(1)
@@ -38,6 +34,7 @@ def test_get_details():
 	for password in wrd_lst.readlines():
 		password = password.strip("\n")
 		print(password)
+
 
 # connect to the SSH server with the password passed as arg
 def connect_ssh(password):
@@ -111,6 +108,7 @@ def ssh_brute_forcer_simple():
 
 
 def main():
+
 	get_target_details()
 	#test_get_details()
 	ssh_brute_forcer_simple()
