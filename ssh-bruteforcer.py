@@ -2,6 +2,7 @@ import paramiko, sys, os, socket
 import argparse
 from enum import Enum
 
+# status code returned while trying to connect to target
 class Code(Enum):
 	AUTHENTICATION_SUCCESSFUL = 0
 	AUTHENTICATION_EXCEPTION = 1
