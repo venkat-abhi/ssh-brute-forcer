@@ -1,6 +1,5 @@
 # SSH Brute Forcer
-This Python Script allows you to brute force an SSH server by attempting to connect to it using passwords read from a
-word list.
+This Python Script allows you to brute force an SSH server by attempting to connect using the dictionary attack.
 
 It uses the paramiko module for the SSH connection between the attacker and target.
 
