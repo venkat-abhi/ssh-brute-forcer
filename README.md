@@ -8,4 +8,4 @@ It uses the paramiko module for the SSH connection between the attacker and targ
 ![](/output/def-found.png)
 
 ## Verbose
-![](/output/verb-found.png)
+![](/output/n-verb-found.png)
