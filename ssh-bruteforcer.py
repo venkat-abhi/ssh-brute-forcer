@@ -145,12 +145,16 @@ def ssh_brute_forcer_dictionary():
 """
 def grab_banner():
 	s = socket.socket()
-	s.connect((g_host, SSH_PORT))
-	banner = s.recv(1024)
+	try:
+		s.connect((g_host, SSH_PORT))
+		banner = s.recv(1024)
 
-	print(lineb + "[#] SSH Server Info" + linel)
-	print(banner.decode())
-	#print(banner.decode() + "\n" + line)
+		print(lineb + "[#] SSH Server Info" + linel)
+		print(banner.decode())
+
+	except Exception as e:
+		print(lineb + "Exception Raised While Grabbing Banner: {}".format(e) + linel)
+		sys.exit(3)
 
 	s.close()
 
