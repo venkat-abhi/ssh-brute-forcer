@@ -48,10 +48,10 @@ def get_target_details():
 def show_target_details():
 	global g_host, g_user_name, g_word_list
 
-	#print(line)
-	print(lineb + "Target IP Address:", g_host)
+	print(lineb + "[#] Entered Info" + linel)
+	print("Target IP Address:", g_host)
 	print("Username:         ", g_user_name)
-	print("Wordlist Path:    ", os.path.abspath(g_word_list) + lineb)
+	print("Wordlist Path:    ", os.path.abspath(g_word_list))
 
 
 """
@@ -104,7 +104,7 @@ def ssh_brute_forcer_dictionary():
 	passwords[:] = [password.strip("\n") for password in passwords]
 	passwords = list(filter(None, passwords))
 
-	print(lineb + "[*] Running Dictionary Attack" + linel)
+	print(lineb + "[#] Running Dictionary Attack" + linel)
 
 	# read each password from the file_words
 	for password in passwords:
@@ -137,7 +137,7 @@ def ssh_brute_forcer_dictionary():
 
 	# no passwords matched
 	file_words.close()
-	print(lineb + "No passwords matched" + linel)
+	print(lineb + "[*] No passwords matched" + linel)
 
 
 """
@@ -148,7 +148,7 @@ def grab_banner():
 	s.connect((g_host, SSH_PORT))
 	banner = s.recv(1024)
 
-	print(lineb + "SSH Server Info" + linel)
+	print(lineb + "[#] SSH Server Info" + linel)
 	print(banner.decode())
 	#print(banner.decode() + "\n" + line)
 
