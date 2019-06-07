@@ -9,7 +9,12 @@ class Code(Enum):
 	SSH_EXCEPTION = 2
 	SOCKET_ERROR = 3
 
-line = "------------------------------------------------------\n"
+# Crappy code; need to find better way
+linel = "\n--------------------------------------------------------------------------"
+lineb = "\n--------------------------------------------------------------------------\n"
+liner = "--------------------------------------------------------------------------\n"
+line = "--------------------------------------------------------------------------"
+
 g_host = g_user_name = ""		# SSH connection details
 client_ssh = ""					# Instance of SSHClient
 g_word_list = ""				# path to the wordlist file
@@ -44,9 +49,9 @@ def show_target_details():
 	global g_host, g_user_name, g_word_list
 
 	#print(line)
-	print(line + "Target IP Address:", g_host)
+	print(lineb + "Target IP Address:", g_host)
 	print("Username:         ", g_user_name)
-	print("Wordlist Path:    ", os.path.abspath(g_word_list) + "\n" + line)
+	print("Wordlist Path:    ", os.path.abspath(g_word_list) + lineb)
 
 
 """
@@ -95,7 +100,7 @@ def ssh_brute_forcer_dictionary():
 	if (args.banner or args.verbose):
 		grab_banner()
 
-	print(line + "[*] Running Dictionary Attack\n" + line)
+	print(lineb + "[*] Running Dictionary Attack" + linel)
 
 	# read each password from the file_words
 	for password in file_words.readlines():
@@ -130,7 +135,7 @@ def ssh_brute_forcer_dictionary():
 
 	# no passwords matched
 	file_words.close()
-	print("No passwords matched")
+	print(lineb + "No passwords matched" + linel)
 
 
 """
@@ -148,10 +153,11 @@ def grab_banner():
 
 	s = socket.socket()
 	s.connect((g_host, SSH_PORT))
-	banner = str(s.recv(1024))
+	banner = s.recv(1024)
 
-	print(line + "SSH Server Banner\n" + line)
-	print(banner + "\n" + line)
+	print(lineb + "SSH Server Info" + linel)
+	print(banner.decode())
+	#print(banner.decode() + "\n" + line)
 
 	s.close()
 
@@ -174,3 +180,4 @@ def main():
 if __name__ == "__main__":
 	main()
 
+# handle case of empty lines
