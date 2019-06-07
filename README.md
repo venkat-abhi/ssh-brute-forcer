@@ -5,7 +5,7 @@ It uses the paramiko module for the SSH connection between the attacker and targ
 
 # Output
 ## Non Verbose
-![](/output/def-found.png)
+![](/output/n-def-found.png)
 
 ## Verbose
 ![](/output/n-verb-found.png)
