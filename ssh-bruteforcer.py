@@ -39,11 +39,11 @@ def get_target_details():
 def show_target_details():
 	global g_host, g_user_name, g_word_list
 
-	print("{0}".format(line))
+	print(line)
 	print("Target IP Address:", g_host)
 	print("Username:         ", g_user_name)
 	print("Wordlist Path:    ", os.path.abspath(g_word_list))
-	print("{0}".format(line))
+	print(line)
 
 
 """
@@ -83,8 +83,9 @@ def connect_ssh(password):
 def ssh_brute_forcer_dictionary():
 	global g_host, g_user_name, g_word_list
 
-	print("[*] Running Dictionary Attack")
-	print(line)
+
+	print(line + "[*] Running Dictionary Attack" + line)
+
 
 	# open the file containing the passwords to try
 	file_words = open(g_word_list)

@@ -2,3 +2,5 @@ Pipfile.lock
 testing
 notes.txt
 brute_test.py
+
+output/
