@@ -1,4 +1,5 @@
 import paramiko, sys, os, socket
+import argparse
 from enum import Enum
 
 class Code(Enum):
@@ -8,9 +9,10 @@ class Code(Enum):
 	SOCKET_ERROR = 3
 
 line = "\n------------------------------------------------------\n"
-g_host = g_user_name = g_word_list = ""
-SSH_PORT = 22
-
+g_host = g_user_name = ""		# SSH connection details
+g_word_list = ""				# path to the wordlist file
+SSH_PORT = 22					# default SSH port
+args = ""						# arguments passed in by user
 
 """
 	get the details of the SSH server from the user
@@ -30,6 +32,18 @@ def get_target_details():
 	except KeyboardInterrupt:
 		print("\n [*] Program has been interrupted at your request")
 		sys.exit(2)
+
+"""
+	show the entered target details
+"""
+def show_target_details():
+	global g_host, g_user_name, g_word_list
+
+	print("{0}".format(line))
+	print("Target IP Address: ", g_host)
+	print("Username to Brute Force: ", g_user_name)
+	print("Wordlist Path", os.path.abspath(g_word_list))
+	print("{0}".format(line))
 
 
 """
@@ -108,10 +122,16 @@ def ssh_brute_forcer_simple():
 
 
 def main():
+	global args
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                    action="store_true")
+	args = parser.parse_args()
 
 	get_target_details()
-	#test_get_details()
-	#test_ssh_brute()
+	if (args.verbose):
+		show_target_details()
+
 	ssh_brute_forcer_simple()
 
 if __name__ == "__main__":
