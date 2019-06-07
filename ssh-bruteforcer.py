@@ -111,7 +111,7 @@ def ssh_brute_forcer_dictionary():
 
 			# we were able to connect successfuly to the target
 			if (response == Code.AUTHENTICATION_SUCCESSFUL):
-				print("\n{0}[*] Password found\n[*] Password: {1}\n{0}".format(line, password))
+				print("{0}[*] Password found\n[*] Password: {1}{0}".format(lineb, password))
 				sys.exit(0)
 
 			# authentication failed
@@ -167,7 +167,7 @@ def main():
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-	parser.add_argument("--banner", help="get target's SSH server details", )
+	parser.add_argument("--banner", help="get target's SSH server details", action="store_true")
 
 	args = parser.parse_args()
 
