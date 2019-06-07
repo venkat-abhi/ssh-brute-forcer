@@ -40,9 +40,9 @@ def show_target_details():
 	global g_host, g_user_name, g_word_list
 
 	print("{0}".format(line))
-	print("Target IP Address: ", g_host)
-	print("Username to Brute Force: ", g_user_name)
-	print("Wordlist Path", os.path.abspath(g_word_list))
+	print("Target IP Address:", g_host)
+	print("Username:         ", g_user_name)
+	print("Wordlist Path:    ", os.path.abspath(g_word_list))
 	print("{0}".format(line))
 
 
@@ -50,7 +50,7 @@ def show_target_details():
 	connect to the SSH server with the password passed as arg
 """
 def connect_ssh(password):
-	global g_host, g_user_name, g_word_list
+	global g_host, g_user_name, g_word_list, args
 
 	# create a new SSH client
 	client_ssh = paramiko.SSHClient()
@@ -80,8 +80,11 @@ def connect_ssh(password):
 """
 	tries out all the passwords in a file
 """
-def ssh_brute_forcer_simple():
+def ssh_brute_forcer_dictionary():
 	global g_host, g_user_name, g_word_list
+
+	print("[*] Running Dictionary Attack")
+	print(line)
 
 	# open the file containing the passwords to try
 	file_words = open(g_word_list)
@@ -100,7 +103,8 @@ def ssh_brute_forcer_simple():
 
 			# authentication failed
 			elif (response == Code.AUTHENTICATION_EXCEPTION):
-				print("[*] Authentication failed with password: ", password)
+				if (args.verbose):
+					print("[*] Authentication failed with password: ", password)
 
 			# error in connecting or establishing an ssh connection
 			elif (response == Code.SSH_EXCEPTION):
@@ -124,15 +128,14 @@ def ssh_brute_forcer_simple():
 def main():
 	global args
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-v", "--verbose", help="increase output verbosity",
-                    action="store_true")
+	parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
 	args = parser.parse_args()
 
 	get_target_details()
 	if (args.verbose):
 		show_target_details()
 
-	ssh_brute_forcer_simple()
+	ssh_brute_forcer_dictionary()
 
 if __name__ == "__main__":
 	main()
